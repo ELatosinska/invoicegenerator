@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "localhost:8081")
 @RestController
 @RequestMapping("/api")
 public class CategoryController{
@@ -52,6 +52,19 @@ public class CategoryController{
             return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
         } catch(Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Long id) {
+        Optional<Category> categoryToChange = categoryRepository.findById(id);
+        if(categoryToChange.isPresent()) {
+            Category changedCategory = categoryToChange.get();
+            changedCategory.setName(category.getName()==null? changedCategory.getName() : category.getName());
+            changedCategory.setTaxRateInPercent(category.getTaxRateInPercent()==null? changedCategory.getTaxRateInPercent() : category.getTaxRateInPercent());
+            return new ResponseEntity<>(categoryRepository.save(changedCategory), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
