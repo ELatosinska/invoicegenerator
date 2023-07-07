@@ -4,7 +4,6 @@ import latosinska.elzbieta.invoicegenerator.model.Product;
 import latosinska.elzbieta.invoicegenerator.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +23,7 @@ public class ProductController {
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
             List<Product> products = productRepository.findAll();
+            if(products.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch(Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
