@@ -11,7 +11,7 @@ public class Category {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private int taxRateInPercent;
+    private Integer taxRateInPercent;
     @OneToMany(mappedBy = "category")
     private Collection<Product> products;
 
@@ -39,7 +39,7 @@ public class Category {
         this.name = name;
     }
 
-    public int getTaxRateInPercent() {
+    public Integer getTaxRateInPercent() {
         return taxRateInPercent;
     }
 
