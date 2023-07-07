@@ -11,7 +11,6 @@ public class Company {
     @Column(nullable = false)
     private String name;
     @PrimaryKeyJoinColumn
-    @Column(name="address")
     @OneToOne
     private Address address;
 
