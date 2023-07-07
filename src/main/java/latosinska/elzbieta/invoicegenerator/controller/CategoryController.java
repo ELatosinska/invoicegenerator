@@ -67,4 +67,14 @@ public class CategoryController{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") Long id) {
+        try {
+            categoryRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
