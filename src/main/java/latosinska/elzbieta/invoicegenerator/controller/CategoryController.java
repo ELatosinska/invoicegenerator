@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 @CrossOrigin(origins = "localhost:8081")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/categories")
 public class CategoryController{
     @Autowired
     CategoryRepository categoryRepository;
 
-    @GetMapping("/categories")
+    @GetMapping
     public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String name) {
         try {
             List<Category> categories = new ArrayList<>();
@@ -34,7 +34,7 @@ public class CategoryController{
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/categories/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
         Optional<Category> category = categoryRepository.findById(id);
 
@@ -45,7 +45,7 @@ public class CategoryController{
         }
     }
 
-    @PostMapping("/categories")
+    @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         try{
             Category createdCategory = categoryRepository.save(new Category(category.getName(), category.getTaxRateInPercent()));
@@ -55,7 +55,7 @@ public class CategoryController{
         }
     }
 
-    @PutMapping("/categories/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Long id) {
         Optional<Category> categoryToChange = categoryRepository.findById(id);
         if(categoryToChange.isPresent()) {
@@ -68,7 +68,7 @@ public class CategoryController{
         }
     }
 
-    @DeleteMapping("/categories/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") Long id) {
         try {
             categoryRepository.deleteById(id);
@@ -78,7 +78,7 @@ public class CategoryController{
         }
     }
 
-    @DeleteMapping("/categories")
+    @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllCategories() {
         try {
             categoryRepository.deleteAll();
