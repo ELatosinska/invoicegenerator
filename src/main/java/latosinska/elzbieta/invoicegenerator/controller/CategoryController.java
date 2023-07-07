@@ -5,16 +5,14 @@ import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:8081")
+import java.util.Optional;
+@CrossOrigin(origins = "localhost:8081")
 @RestController
+@RequestMapping("/api")
 public class CategoryController{
     @Autowired
     CategoryRepository categoryRepository;
@@ -34,6 +32,59 @@ public class CategoryController{
             return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch(Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
+        Optional<Category> category = categoryRepository.findById(id);
+
+        if(category.isPresent()) {
+            return new ResponseEntity<>(category.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        try{
+            Category createdCategory = categoryRepository.save(new Category(category.getName(), category.getTaxRateInPercent()));
+            return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+        } catch(Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Long id) {
+        Optional<Category> categoryToChange = categoryRepository.findById(id);
+        if(categoryToChange.isPresent()) {
+            Category changedCategory = categoryToChange.get();
+            changedCategory.setName(category.getName()==null? changedCategory.getName() : category.getName());
+            changedCategory.setTaxRateInPercent(category.getTaxRateInPercent()==null? changedCategory.getTaxRateInPercent() : category.getTaxRateInPercent());
+            return new ResponseEntity<>(categoryRepository.save(changedCategory), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") Long id) {
+        try {
+            categoryRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/categories")
+    public ResponseEntity<HttpStatus> deleteAllCategories() {
+        try {
+            categoryRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
