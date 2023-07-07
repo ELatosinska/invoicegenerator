@@ -78,7 +78,7 @@ public class CategoryController{
         }
     }
 
-    @DeleteMapping("/categoies")
+    @DeleteMapping("/categories")
     public ResponseEntity<HttpStatus> deleteAllCategories() {
         try {
             categoryRepository.deleteAll();
