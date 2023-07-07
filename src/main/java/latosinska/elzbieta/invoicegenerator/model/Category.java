@@ -10,7 +10,7 @@ public class Category {
     private @Id @GeneratedValue Long id;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "tax_rate_in_percent")
     private Integer taxRateInPercent;
     @OneToMany(mappedBy = "category")
     private Collection<Product> products;

@@ -11,7 +11,7 @@ public class Product {
     private @Id @GeneratedValue Long id;
     @Column(nullable = false)
     private String name;
-    @Column
+    @Column(name="net_price")
     private Double netPrice;
 
     @ManyToOne()
