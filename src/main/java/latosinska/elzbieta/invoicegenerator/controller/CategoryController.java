@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
+@RequestMapping("/api")
 public class CategoryController{
     @Autowired
     CategoryRepository categoryRepository;
@@ -42,6 +43,16 @@ public class CategoryController{
             return new ResponseEntity<>(category.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        try{
+            Category createdCategory = categoryRepository.save(new Category(category.getName(), category.getTaxRateInPercent()));
+            return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+        } catch(Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
