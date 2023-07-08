@@ -24,7 +24,7 @@ public class CategoryController{
             if (name == null) {
                 categories.addAll(categoryRepository.findAll());
             } else {
-                categories.addAll(categoryRepository.findByName(name));
+                categories.add(categoryRepository.findByName(name));
             }
             if(categories.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

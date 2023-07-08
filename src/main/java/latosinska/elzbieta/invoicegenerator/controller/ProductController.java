@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +24,25 @@ public class ProductController {
     CategoryRepository categoryRepository;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name="category") String categoryName) {
         try {
-            List<Product> products = productRepository.findAll();
-            if(products.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            return new ResponseEntity<>(products, HttpStatus.OK);
+            Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
+            List<Product> products = new ArrayList<>();
+            if(categoryName.isEmpty()) {
+                products = productRepository.findAll();
+            }else {
+                if (productsCategory.isEmpty()) {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                } else {
+                    products.addAll(productRepository.findAllByCategory(productsCategory.get()));
+                }
+            }
+            if (products.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            else
+                return new ResponseEntity<>(products, HttpStatus.OK);
+
+
         } catch(Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -47,11 +62,14 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO product) {
         try{
             Product createdProduct;
-            Category productCategory = categoryRepository.findById(product.getCategoryId()).get();
+            Optional<Category> productCategory = categoryRepository.findById(product.getCategoryId());
+            if(productCategory.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
             if(product.getNetPrice()==null) {
-                createdProduct = productRepository.save(new Product(product.getName(), productCategory));
+                createdProduct = productRepository.save(new Product(product.getName(), productCategory.get()));
             } else {
-                createdProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), productCategory));
+                createdProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), productCategory.get()));
             }
             return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
         }catch(Exception ex) {

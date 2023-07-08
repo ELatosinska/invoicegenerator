@@ -8,7 +8,7 @@ import java.util.Collection;
 @Table(name="categories")
 public class Category {
     private @Id @GeneratedValue long id;
-
+    @Column(unique = true)
     private String name;
     @Column(nullable = false)
     private Integer taxRateInPercent;
