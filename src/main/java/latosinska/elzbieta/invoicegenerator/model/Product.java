@@ -15,7 +15,7 @@ public class Product {
     private Double netPrice;
 
     @ManyToOne()
-    @JoinColumn(name="category_id", referencedColumnName = "id")
+    @JoinColumn(name="category", referencedColumnName = "id")
     private Category category;
 
     public Product() {

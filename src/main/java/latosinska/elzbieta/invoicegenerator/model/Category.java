@@ -7,13 +7,11 @@ import java.util.Collection;
 @Entity
 @Table(name="categories")
 public class Category {
-    private @Id @GeneratedValue Long id;
-    @Column(nullable = false)
+    private @Id @GeneratedValue long id;
+
     private String name;
     @Column(nullable = false)
     private Integer taxRateInPercent;
-    @OneToMany(mappedBy = "category")
-    private Collection<Product> products;
 
     public Category() {
     }
@@ -21,14 +19,6 @@ public class Category {
     public Category(String name, int taxRateInPercent) {
         this.name = name;
         this.taxRateInPercent = taxRateInPercent;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -43,15 +33,16 @@ public class Category {
         return taxRateInPercent;
     }
 
-    public void setTaxRateInPercent(int taxRateInPercent) {
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTaxRateInPercent(Integer taxRateInPercent) {
         this.taxRateInPercent = taxRateInPercent;
-    }
-
-    public Collection<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Collection<Product> products) {
-        this.products = products;
     }
 }
