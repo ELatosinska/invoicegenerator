@@ -26,15 +26,15 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name="category") String categoryName) {
         try {
-            Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
-            List<Product> products = new ArrayList<>();
-            if(categoryName.isEmpty()) {
+            List<Product> products;
+            if(categoryName==null) {
                 products = productRepository.findAll();
-            }else {
+            } else {
+                Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
                 if (productsCategory.isEmpty()) {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 } else {
-                    products.addAll(productRepository.findAllByCategory(productsCategory.get()));
+                    products = new ArrayList<>(productRepository.findAllByCategory(productsCategory.get()));
                 }
             }
             if (products.isEmpty())
@@ -73,6 +73,25 @@ public class ProductController {
             }
             return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
         }catch(Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@RequestBody ProductDTO product, @PathVariable("id") Long id) {
+        try {
+            Optional<Product> productToUpdate = productRepository.findById(id);
+            Optional<Category> productCategory = Optional.empty();
+            if(productToUpdate.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Product modifingProduct = productToUpdate.get();
+            if(product.getName()!=null) modifingProduct.setName(product.getName());
+            if(product.getNetPrice()!=null) modifingProduct.setNetPrice(product.getNetPrice());
+            if(product.getCategoryId()!=null) productCategory = categoryRepository.findById(product.getCategoryId());
+            productCategory.ifPresent(modifingProduct::setCategory);
+            return new ResponseEntity<>(productRepository.save(modifingProduct), HttpStatus.OK);
+        } catch(Exception ex) {
             System.out.println(ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

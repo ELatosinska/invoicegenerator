@@ -2,7 +2,7 @@ package latosinska.elzbieta.invoicegenerator.dto;
 
 public class ProductDTO {
     private String name;
-    private long categoryId;
+    private Long categoryId;
     private Double netPrice;
 
     public ProductDTO() {
@@ -23,7 +23,7 @@ public class ProductDTO {
         return name;
     }
 
-    public long getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
