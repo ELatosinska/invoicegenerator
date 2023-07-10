@@ -23,7 +23,7 @@ public class ProductController {
     @Autowired
     CategoryRepository categoryRepository;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name = "category") String categoryName) {
         try {
             List<Product> products;
@@ -58,7 +58,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO product) {
         try {
             Product createdProduct;
@@ -103,7 +103,7 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllProducts() {
         try{
             productRepository.deleteAll();
