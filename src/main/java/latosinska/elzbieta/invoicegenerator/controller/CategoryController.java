@@ -31,7 +31,7 @@ public class CategoryController{
             }
             return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch(Exception ex) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping("/{id}")
