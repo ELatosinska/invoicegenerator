@@ -1,6 +1,7 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.service.PriceService;
 
 import java.util.Objects;
 
@@ -52,7 +53,7 @@ public class Product {
     }
 
     public void setNetPrice(Double netPrice) {
-        this.netPrice = netPrice;
+        this.netPrice = PriceService.roundPrice(netPrice);
     }
 
     public Category getCategory() {
