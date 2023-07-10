@@ -30,7 +30,7 @@ public class ProductController {
             if (categoryName == null) {
                 products = productRepository.findAll();
             } else {
-                Optional<Category> productsCategory = categoryRepository.findByName(categoryName);
+                Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
                 if (productsCategory.isEmpty()) {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 } else {
@@ -62,7 +62,7 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO product) {
         try {
             Product createdProduct;
-            Optional<Category> productCategory = categoryRepository.findByName(product.getCategory());
+            Optional<Category> productCategory = categoryRepository.findById(product.getCategoryId());
             if (productCategory.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -92,7 +92,7 @@ public class ProductController {
                     .map(ProductDTO::getNetPrice)
                     .ifPresent(modifingProduct::setNetPrice);
             Optional.of(product)
-                    .map(ProductDTO::getCategory)
+                    .map(ProductDTO::getCategoryId)
                     .map(categoryId -> categoryRepository.findById(categoryId))
                     .flatMap(category -> category)
                     .ifPresent(modifingProduct::setCategory);
