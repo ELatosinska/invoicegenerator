@@ -22,7 +22,7 @@ public class AddressController {
     @GetMapping
     public ResponseEntity<List<Address>> getAddresses() {
         List<Address> addresses = new ArrayList<>(addressRepository.findAll());
-        return addresses.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(addresses, HttpStatus.OK);
+        return addresses.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(addresses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -61,6 +61,12 @@ public class AddressController {
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<HttpStatus> deleteAllAddresses() {
+        addressRepository.deleteAll();
+        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
