@@ -1,22 +1,20 @@
 package latosinska.elzbieta.invoicegenerator.controller;
 
+import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.model.Address;
-import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "localhost:8081")
 @RestController
 @RequestMapping("/api/addresses")
 public class AddressController{
-    @Autowired
+    @Resource
     AddressRepository addressRepository;
 
     @GetMapping
@@ -30,6 +28,16 @@ public class AddressController{
         return addressRepository.findById(id)
                 .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping
+    public ResponseEntity<Address> createAddress(@RequestBody Address address) {
+        try {
+            return new ResponseEntity<>(addressRepository.save(address), HttpStatus.CREATED);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+            return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
