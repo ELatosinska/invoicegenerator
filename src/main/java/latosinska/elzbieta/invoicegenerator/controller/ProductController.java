@@ -86,10 +86,17 @@ public class ProductController {
             if(productToUpdate.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             Product modifingProduct = productToUpdate.get();
-            if(product.getName()!=null) modifingProduct.setName(product.getName());
-            if(product.getNetPrice()!=null) modifingProduct.setNetPrice(product.getNetPrice());
-            if(product.getCategoryId()!=null) productCategory = categoryRepository.findById(product.getCategoryId());
-            productCategory.ifPresent(modifingProduct::setCategory);
+            Optional.of(product)
+                    .map(ProductDTO::getName)
+                    .ifPresent(modifingProduct::setName);
+            Optional.of(product)
+                    .map(ProductDTO::getNetPrice)
+                    .ifPresent(modifingProduct::setNetPrice);
+            Optional.of(product)
+                    .map(ProductDTO::getCategoryId)
+                    .map(categoryId -> categoryRepository.findById(categoryId))
+                    .flatMap(category -> category)
+                    .ifPresent(modifingProduct::setCategory);
             return new ResponseEntity<>(productRepository.save(modifingProduct), HttpStatus.OK);
         } catch(Exception ex) {
             System.out.println(ex.getMessage());
