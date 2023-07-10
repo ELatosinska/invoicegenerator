@@ -10,7 +10,7 @@ public class Category {
     private @Id @GeneratedValue long id;
     @Column(unique = true)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "tax_rate_in_percent")
     private Integer taxRateInPercent;
 
     public Category() {
