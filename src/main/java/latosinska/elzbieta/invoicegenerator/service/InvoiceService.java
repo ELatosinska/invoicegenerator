@@ -11,17 +11,17 @@ public class InvoiceService {
     }
 
     public Double calculateTotalNetPrice() {
-        return invoice.getItems().stream()
+        return PriceService.roundPrice(invoice.getItems().stream()
                 .mapToDouble(item -> item.getProduct().getNetPrice()*item.getQuantity())
-                .sum();
+                .sum());
     }
     public Double calculateTotalTaxPrice() {
-        return invoice.getItems().stream()
+        return PriceService.roundPrice(invoice.getItems().stream()
                 .mapToDouble(item -> item.getProduct().getNetPrice()*((double) item.getProduct().getCategory().getTaxRateInPercent() /100)*item.getQuantity())
-                .sum();
+                .sum());
     }
     public Double calculateTotalGrossPrice() {
-        return calculateTotalNetPrice()+calculateTotalTaxPrice();
+        return PriceService.roundPrice(calculateTotalNetPrice()+calculateTotalTaxPrice());
     }
 
     public void addItem(InvoiceItem invoiceItem) {
