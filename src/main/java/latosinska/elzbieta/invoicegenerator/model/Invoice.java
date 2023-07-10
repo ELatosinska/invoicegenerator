@@ -10,7 +10,7 @@ import java.util.Date;
 @Table(name = "invoices")
 public class Invoice {
 
-    private static int duePeriodInDays = 14;
+    private static int timeToPayForInvoiceInDays = 14;
     @Column(name = "created_date")
     private Date createdDate;
     @Column(name = "due_date")
@@ -27,7 +27,7 @@ public class Invoice {
 
     {
         createdDate = new Date(System.currentTimeMillis());
-        dueDate =setDueDate(createdDate);
+        dueDate = setDueDate(createdDate);
     }
 
     public Invoice() {
@@ -42,15 +42,16 @@ public class Invoice {
         return items;
     }
 
-    public void setDuePeriodInDays(int daysToPayInvoice) {
-        if(daysToPayInvoice >= 0) duePeriodInDays = daysToPayInvoice;
-        // TODO: what to do when days less than 0
+    public void setTimeToPayForInvoiceInDays(int daysToPayInvoice) {
+        if(daysToPayInvoice < 0)
+            throw new IllegalArgumentException("You cannot set time to pay less tan 0 days");
+        timeToPayForInvoiceInDays = daysToPayInvoice;
     }
 
     private Date setDueDate(Date createdDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createdDate);
-        calendar.add(Calendar.DATE, duePeriodInDays);
+        calendar.add(Calendar.DATE, timeToPayForInvoiceInDays);
         return calendar.getTime();
     }
 }
