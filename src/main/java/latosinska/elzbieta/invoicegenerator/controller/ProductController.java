@@ -23,11 +23,11 @@ public class ProductController {
     @Autowired
     CategoryRepository categoryRepository;
 
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name="category") String categoryName) {
+    @GetMapping("/")
+    public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name = "category") String categoryName) {
         try {
             List<Product> products;
-            if(categoryName==null) {
+            if (categoryName == null) {
                 products = productRepository.findAll();
             } else {
                 Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
@@ -43,7 +43,7 @@ public class ProductController {
                 return new ResponseEntity<>(products, HttpStatus.OK);
 
 
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -51,28 +51,28 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) {
         Optional<Product> product = productRepository.findById(id);
-        if(product.isPresent()) {
+        if (product.isPresent()) {
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO product) {
-        try{
+        try {
             Product createdProduct;
             Optional<Category> productCategory = categoryRepository.findById(product.getCategoryId());
-            if(productCategory.isEmpty())
+            if (productCategory.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-            if(product.getNetPrice()==null) {
+            if (product.getNetPrice() == null) {
                 createdProduct = productRepository.save(new Product(product.getName(), productCategory.get()));
             } else {
                 createdProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), productCategory.get()));
             }
             return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -82,8 +82,7 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@RequestBody ProductDTO product, @PathVariable("id") Long id) {
         try {
             Optional<Product> productToUpdate = productRepository.findById(id);
-            Optional<Category> productCategory = Optional.empty();
-            if(productToUpdate.isEmpty())
+            if (productToUpdate.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             Product modifingProduct = productToUpdate.get();
             Optional.of(product)
@@ -98,8 +97,28 @@ public class ProductController {
                     .flatMap(category -> category)
                     .ifPresent(modifingProduct::setCategory);
             return new ResponseEntity<>(productRepository.save(modifingProduct), HttpStatus.OK);
-        } catch(Exception ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @DeleteMapping("/")
+    public ResponseEntity<HttpStatus> deleteAllProducts() {
+        try{
+            productRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteProduct(@PathVariable("id") Long id) {
+        try {
+            productRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
