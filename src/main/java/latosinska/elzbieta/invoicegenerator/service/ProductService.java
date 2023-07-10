@@ -8,6 +8,6 @@ public class ProductService {
     private Collection<Product> products;
 
     public static Double calculateGrossPrice(Product product) {
-        return product.getNetPrice()*((double)product.getCategory().getTaxRateInPercent()/100+1);
+        return PriceService.roundPrice(product.getNetPrice()*((double)product.getCategory().getTaxRateInPercent()/100+1));
     }
 }
