@@ -2,20 +2,20 @@ package latosinska.elzbieta.invoicegenerator.dto;
 
 public class ProductDTO {
     private String name;
-    private Long categoryId;
+    private String category;
     private Double netPrice;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(String name, Long categoryId) {
+    public ProductDTO(String name, String categoryId) {
         this.name = name;
-        this.categoryId = categoryId;
+        this.category = categoryId;
     }
 
-    public ProductDTO(String name, Long categoryId, Double netPrice) {
+    public ProductDTO(String name, String categoryId, Double netPrice) {
         this.name = name;
-        this.categoryId = categoryId;
+        this.category = categoryId;
         this.netPrice = netPrice;
     }
 
@@ -23,8 +23,8 @@ public class ProductDTO {
         return name;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public String getCategory() {
+        return category;
     }
 
     public Double getNetPrice() {
