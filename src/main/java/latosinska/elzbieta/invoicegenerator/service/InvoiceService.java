@@ -1,6 +1,7 @@
 package latosinska.elzbieta.invoicegenerator.service;
 
 import latosinska.elzbieta.invoicegenerator.model.Invoice;
+import latosinska.elzbieta.invoicegenerator.model.InvoiceItem;
 
 public class InvoiceService {
     private Invoice invoice;
@@ -23,5 +24,22 @@ public class InvoiceService {
         return calculateTotalNetPrice()+calculateTotalTaxPrice();
     }
 
+    public void addItem(InvoiceItem invoiceItem) {
+        if(productsExistsOnTheInvoice(invoiceItem)) {
+            addQuantityOfExistingProduct(invoiceItem);
+        } else {
+            invoice.getItems().add(invoiceItem);
+        }
+    }
+
+    private void addQuantityOfExistingProduct(InvoiceItem invoiceItem) {
+        invoice.getItems().stream()
+                .filter(item -> item.getProduct().equals(invoiceItem.getProduct()))
+                .forEach(item -> item.setQuantity(item.getQuantity()+ invoiceItem.getQuantity()));
+    }
+
+    private boolean productsExistsOnTheInvoice(InvoiceItem invoiceItem) {
+        return invoice.getItems().stream().map(InvoiceItem::getProduct).anyMatch(product -> product.equals(invoiceItem.getProduct()));
+    }
 
 }
