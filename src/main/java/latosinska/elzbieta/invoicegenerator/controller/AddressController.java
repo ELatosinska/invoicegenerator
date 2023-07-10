@@ -1,5 +1,6 @@
 package latosinska.elzbieta.invoicegenerator.controller;
 
+
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.model.Address;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
@@ -12,9 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+
 @CrossOrigin(origins = "localhost:8081")
 @RestController
 @RequestMapping("/api/addresses")
+
 public class AddressController {
     @Resource
     AddressRepository addressRepository;
@@ -83,5 +92,4 @@ public class AddressController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-}
+    }
