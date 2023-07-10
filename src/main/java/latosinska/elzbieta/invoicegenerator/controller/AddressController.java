@@ -66,7 +66,22 @@ public class AddressController {
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllAddresses() {
         addressRepository.deleteAll();
-        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteAddressById(@PathVariable("id") Long id) {
+        try {
+            Optional<Address> addressToDelete = addressRepository.findById(id);
+            if (addressToDelete.isPresent()) {
+                addressRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
