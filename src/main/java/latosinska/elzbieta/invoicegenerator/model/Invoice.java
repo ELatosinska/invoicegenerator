@@ -38,6 +38,10 @@ public class Invoice {
         this.vendee = vendee;
     }
 
+    public Collection<InvoiceItem> getItems() {
+        return items;
+    }
+
     public void setDuePeriodInDays(int daysToPayInvoice) {
         if(daysToPayInvoice >= 0) duePeriodInDays = daysToPayInvoice;
         // TODO: what to do when days less than 0

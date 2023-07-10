@@ -11,4 +11,12 @@ public class InvoiceItem {
     @ManyToOne()
     @JoinColumn(name="invoice_id", referencedColumnName = "id")
     private @Id Invoice invoice;
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
 }
