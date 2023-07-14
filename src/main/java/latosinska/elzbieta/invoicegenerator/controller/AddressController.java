@@ -4,7 +4,6 @@ package latosinska.elzbieta.invoicegenerator.controller;
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.model.Address;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

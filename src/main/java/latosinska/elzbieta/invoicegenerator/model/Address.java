@@ -4,6 +4,8 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "Addresses")
@@ -12,9 +14,9 @@ public class Address {
     @Column
     private String street;
     @Column(nullable = false, name = "building_number")
-    private Integer buildingNumber;
+    private String buildingNumber;
     @Column(name = "apartment_number")
-    private Integer apartmentNumber;
+    private String apartmentNumber;
     @Column
     private String city;
     @Column(name = "postal_code")
@@ -22,10 +24,13 @@ public class Address {
     @Column
     private String country;
 
+    Pattern numbersPattern = Pattern.compile("\\d+[a-z]?");
+
     public Address() {
     }
 
-    public Address(String street, Integer buildingNumber, Integer apartmentNumber, String city, String postalCode, String country) {
+    public Address(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) {
+        if(!isValidNumber(buildingNumber) || !isValidNumber(apartmentNumber))  throw new IllegalArgumentException();
         this.street = street;
         this.buildingNumber = buildingNumber;
         this.apartmentNumber = apartmentNumber;
@@ -50,19 +55,22 @@ public class Address {
         this.street = street;
     }
 
-    public Integer getBuildingNumber() {
+    public String getBuildingNumber() {
         return buildingNumber;
     }
 
-    public void setBuildingNumber(Integer buildingNumber) {
+    public void setBuildingNumber(String buildingNumber) {
+        if(!isValidNumber(buildingNumber)) throw new IllegalArgumentException();
         this.buildingNumber = buildingNumber;
     }
 
-    public Integer getApartmentNumber() {
+    public String getApartmentNumber() {
         return apartmentNumber;
     }
 
-    public void setApartmentNumber(Integer apartmentNumber) {
+    public void setApartmentNumber(String apartmentNumber) {
+
+        if(!isValidNumber(apartmentNumber)) throw new IllegalArgumentException();
         this.apartmentNumber = apartmentNumber;
     }
 
@@ -114,5 +122,10 @@ public class Address {
                 ", postalCode='" + postalCode + '\'' +
                 ", country='" + country + '\'' +
                 '}';
+    }
+
+    private boolean isValidNumber(String number) {
+        Matcher matcher = numbersPattern.matcher(number);
+        return matcher.matches();
     }
 }
