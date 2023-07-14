@@ -28,4 +28,13 @@ public class CompanyController {
         if(company.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(company.get(), HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<Company> createCompany(@RequestBody Company newCompany) {
+        try {
+            return new ResponseEntity<>(companyRepository.save(newCompany), HttpStatus.CREATED);
+        } catch(Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
