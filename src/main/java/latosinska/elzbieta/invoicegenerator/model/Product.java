@@ -1,6 +1,7 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.dto.ProductDTO;
 import latosinska.elzbieta.invoicegenerator.service.PriceService;
 
 import java.util.Objects;
