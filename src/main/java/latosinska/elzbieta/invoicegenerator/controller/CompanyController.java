@@ -54,4 +54,25 @@ public class CompanyController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping
+    public ResponseEntity<HttpStatus> deleteAllCompanies() {
+        companyRepository.deleteAll();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteCompanyById(@PathVariable("id") Long id) {
+        try {
+            Optional<Company> companyToDelete = companyRepository.findById(id);
+            if (companyToDelete.isPresent()) {
+                companyRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
