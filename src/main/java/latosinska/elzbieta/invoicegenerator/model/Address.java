@@ -1,11 +1,10 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
-import jakarta.annotation.Nullable;
+
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.service.AddressService;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "Addresses")
@@ -24,13 +23,11 @@ public class Address {
     @Column
     private String country;
 
-    Pattern numbersPattern = Pattern.compile("\\d+[a-z]?");
-
     public Address() {
     }
 
     public Address(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) {
-        if(!isValidNumber(buildingNumber) || !isValidNumber(apartmentNumber))  throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new IllegalArgumentException();
         this.street = street;
         this.buildingNumber = buildingNumber;
         this.apartmentNumber = apartmentNumber;
@@ -60,7 +57,7 @@ public class Address {
     }
 
     public void setBuildingNumber(String buildingNumber) {
-        if(!isValidNumber(buildingNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalArgumentException();
         this.buildingNumber = buildingNumber;
     }
 
@@ -70,7 +67,7 @@ public class Address {
 
     public void setApartmentNumber(String apartmentNumber) {
 
-        if(!isValidNumber(apartmentNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalArgumentException();
         this.apartmentNumber = apartmentNumber;
     }
 
@@ -124,8 +121,4 @@ public class Address {
                 '}';
     }
 
-    private boolean isValidNumber(String number) {
-        Matcher matcher = numbersPattern.matcher(number);
-        return matcher.matches();
-    }
 }
