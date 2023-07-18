@@ -1,12 +1,13 @@
 package latosinska.elzbieta.invoicegenerator.dto;
 
+import lombok.Getter;
+
+@Getter
 public class ProductDTO {
     private String name;
     private Long categoryId;
     private Double netPrice;
 
-    public ProductDTO() {
-    }
 
     public ProductDTO(String name, Long categoryId) {
         this.name = name;
@@ -17,17 +18,5 @@ public class ProductDTO {
         this.name = name;
         this.categoryId = categoryId;
         this.netPrice = netPrice;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public Double getNetPrice() {
-        return netPrice;
     }
 }

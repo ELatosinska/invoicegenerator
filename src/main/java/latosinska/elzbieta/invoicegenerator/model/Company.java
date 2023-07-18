@@ -1,11 +1,17 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "companies")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Company {
     private @Id @GeneratedValue Long id;
     @Column(nullable = false)
@@ -14,37 +20,10 @@ public class Company {
     @OneToOne
     private Address address;
 
-    public Company() {
-    }
     public Company(String name, Address address) {
         this.name = name;
         this.address = address;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,6 +1,9 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -9,6 +12,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "invoices")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Invoice {
 
     private static int timeToPayForInvoiceInDays = 14;
@@ -31,51 +37,9 @@ public class Invoice {
         dueDate = calculateDueDate(createdDate);
     }
 
-    public Invoice() {
-    }
 
     public Invoice(Company vendor, Company vendee) {
         this.vendor = vendor;
-        this.vendee = vendee;
-    }
-
-    public Collection<InvoiceItem> getItems() {
-        return items;
-    }
-
-    public static int getTimeToPayForInvoiceInDays() {
-        return timeToPayForInvoiceInDays;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Company getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(Company vendor) {
-        this.vendor = vendor;
-    }
-
-    public Company getVendee() {
-        return vendee;
-    }
-
-    public void setVendee(Company vendee) {
         this.vendee = vendee;
     }
 

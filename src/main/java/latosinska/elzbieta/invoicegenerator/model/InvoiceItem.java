@@ -1,11 +1,17 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "invoice_items")
+@Getter
+@Setter
+@NoArgsConstructor
 public class InvoiceItem {
     @ManyToOne
     private @Id Product product;
@@ -14,8 +20,6 @@ public class InvoiceItem {
     @JoinColumn(name="invoice_id", referencedColumnName = "id")
     private @Id Invoice invoice;
 
-    public InvoiceItem() {}
-
     public InvoiceItem(Product product, Integer quantity, Invoice invoice) {
         if(quantity<1) throw new IllegalArgumentException("Quantity cannot be less than 1");
         this.product = product;
@@ -23,25 +27,9 @@ public class InvoiceItem {
         this.invoice = invoice;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public void setQuantity(Integer quantity) {
         if(quantity<1) throw new IllegalArgumentException("Quantity cannot be less than 1");
         this.quantity = quantity;
-    }
-
-    public Invoice getInvoice() {
-        return invoice;
     }
 
     @Override

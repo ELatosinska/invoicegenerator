@@ -1,34 +1,22 @@
-package latosinska.elzbieta.invoicegenerator.model;
+package latosinska.elzbieta.invoicegenerator.dto;
 
-
-import jakarta.persistence.*;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Objects;
 
-@Entity
-@Table(name = "Addresses")
-@Getter @Setter @NoArgsConstructor
-public class Address {
-    private @Id @GeneratedValue Long id;
-    @Column
+@Getter
+public class AddressDTO {
+    private Long id;
     private String street;
-    @Column(nullable = false, name = "building_number")
     private String buildingNumber;
-    @Column(name = "apartment_number")
     private String apartmentNumber;
-    @Column
     private String city;
-    @Column(name = "postal_code")
     private String postalCode;
-    @Column
     private String country;
 
 
-    public Address(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) {
+    public AddressDTO(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) {
         if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new IllegalArgumentException();
         this.street = street;
         this.buildingNumber = buildingNumber;
@@ -37,7 +25,6 @@ public class Address {
         this.postalCode = postalCode;
         this.country = country;
     }
-
 
     public void setBuildingNumber(String buildingNumber) {
         if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalArgumentException();
@@ -55,26 +42,12 @@ public class Address {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Address address = (Address) o;
-        return Objects.equals(id, address.id) && Objects.equals(street, address.street) && Objects.equals(buildingNumber, address.buildingNumber) && Objects.equals(apartmentNumber, address.apartmentNumber) && Objects.equals(city, address.city) && Objects.equals(postalCode, address.postalCode) && Objects.equals(country, address.country);
+        AddressDTO that = (AddressDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(street, that.street) && Objects.equals(buildingNumber, that.buildingNumber) && Objects.equals(apartmentNumber, that.apartmentNumber) && Objects.equals(city, that.city) && Objects.equals(postalCode, that.postalCode) && Objects.equals(country, that.country);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, street, buildingNumber, apartmentNumber, city, postalCode, country);
     }
-
-    @Override
-    public String toString() {
-        return "Address{" +
-                "id=" + id +
-                ", street='" + street + '\'' +
-                ", buildingNumber=" + buildingNumber +
-                ", apartmentNumber=" + apartmentNumber +
-                ", city='" + city + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", country='" + country + '\'' +
-                '}';
-    }
-
 }
