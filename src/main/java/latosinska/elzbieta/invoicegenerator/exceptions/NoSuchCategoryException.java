@@ -1,4 +1,4 @@
 package latosinska.elzbieta.invoicegenerator.exceptions;
 
-public class NoSuchCategoryException extends Exception{
+public class NoSuchCategoryException extends RuntimeException {
 }

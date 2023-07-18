@@ -1,5 +1,6 @@
 package latosinska.elzbieta.invoicegenerator.dto;
 
+import latosinska.elzbieta.invoicegenerator.exceptions.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 
@@ -27,14 +28,14 @@ public class AddressDTO {
     }
 
     public void setBuildingNumber(String buildingNumber) {
-        if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalAddressNumberException();
         this.buildingNumber = buildingNumber;
     }
 
 
     public void setApartmentNumber(String apartmentNumber) {
 
-        if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalAddressNumberException();
         this.apartmentNumber = apartmentNumber;
     }
 
