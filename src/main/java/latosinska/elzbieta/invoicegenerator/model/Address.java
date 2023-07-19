@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.model;
 
 
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.exceptions.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,14 +41,14 @@ public class Address {
 
 
     public void setBuildingNumber(String buildingNumber) {
-        if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalAddressNumberException();
         this.buildingNumber = buildingNumber;
     }
 
 
     public void setApartmentNumber(String apartmentNumber) {
 
-        if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalArgumentException();
+        if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalAddressNumberException();
         this.apartmentNumber = apartmentNumber;
     }
 
