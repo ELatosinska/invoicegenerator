@@ -1,6 +1,6 @@
 package latosinska.elzbieta.invoicegenerator.dto;
 
-import latosinska.elzbieta.invoicegenerator.exceptions.IllegalAddressNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 

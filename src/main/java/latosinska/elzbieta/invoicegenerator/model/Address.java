@@ -2,7 +2,7 @@ package latosinska.elzbieta.invoicegenerator.model;
 
 
 import jakarta.persistence.*;
-import latosinska.elzbieta.invoicegenerator.exceptions.IllegalAddressNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
