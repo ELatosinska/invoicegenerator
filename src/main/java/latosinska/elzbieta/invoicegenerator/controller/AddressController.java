@@ -2,8 +2,10 @@ package latosinska.elzbieta.invoicegenerator.controller;
 
 
 import jakarta.annotation.Resource;
+import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
 import latosinska.elzbieta.invoicegenerator.model.Address;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
+import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,17 +27,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class AddressController {
     @Resource
+    AddressService addressService;
+    @Resource
     AddressRepository addressRepository;
-
     @GetMapping
-    public ResponseEntity<List<Address>> getAddresses() {
-        List<Address> addresses = new ArrayList<>(addressRepository.findAll());
+    public ResponseEntity<List<AddressDTO>> getAddresses() {
+        List<AddressDTO> addresses = addressService.getAddresses().stream()
+                .map(addressService::getDTOFromAddress)
+                .toList();
         return addresses.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(addresses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Address> getAddressById(@PathVariable("id") Long id) {
-        return addressRepository.findById(id)
+    public ResponseEntity<AddressDTO> getAddressById(@PathVariable("id") Long id) {
+        return addressService.getAddressById(id)
+                .map(addressService::getDTOFromAddress)
                 .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
