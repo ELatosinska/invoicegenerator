@@ -20,7 +20,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getCategories(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<CategoryDTO>> getCategories() {
         List<CategoryDTO> categories = categoryService.getCategories().stream()
                 .map(categoryService::getDTOFromCategory)
                 .toList();
@@ -30,20 +30,11 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<CategoryDTO> getCategoryByName(@RequestParam String name) {
-        Optional<Category> category = categoryService.getCategoryByName(name);
-        if (category.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(categoryService.getDTOFromCategory(category.get()), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("id") Long id) {
         Optional<Category> category = categoryService.getCategoryById(id);
         if (category.isPresent()) {
-            return new ResponseEntity<>(categoryService.getDTOFromCategory(category.get()), HttpStatus.OK); //TODO: change object in response to DTO
+            return new ResponseEntity<>(categoryService.getDTOFromCategory(category.get()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -54,7 +45,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //FIXME: create category with given id
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable("id") Long id) {
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);

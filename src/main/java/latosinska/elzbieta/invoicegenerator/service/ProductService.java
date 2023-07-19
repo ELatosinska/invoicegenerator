@@ -29,7 +29,7 @@ public class ProductService {
     public ResponseEntity<List<Product>> getAllProducts(String categoryName) {
         try {
             List<Product> products;
-            Optional<Category> productsCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
+            Optional<Category> productsCategory = categoryRepository.findByName(categoryName);
             if (productsCategory.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {

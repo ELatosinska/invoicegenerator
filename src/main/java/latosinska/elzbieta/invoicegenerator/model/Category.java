@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name="categories")
 @Getter @Setter @NoArgsConstructor
 public class Category {
-    private @Id @GeneratedValue long id;
+    private @Id long id;
     @Column(unique = true)
     private String name;
     @Column(nullable = false, name = "tax_rate_in_percent")
@@ -19,6 +19,13 @@ public class Category {
 
     public Category(String name, int taxRateInPercent) {
         if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
+        this.name = name;
+        this.taxRateInPercent = taxRateInPercent;
+    }
+
+    public Category(Long id, String name, int taxRateInPercent) {
+        if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
+        this.id = id;
         this.name = name;
         this.taxRateInPercent = taxRateInPercent;
     }
