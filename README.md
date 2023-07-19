@@ -10,9 +10,8 @@ It is running on localhost:8080.
  
 ### /api/categories  
 
-#### GET (optional request param name)
-returns all categories  
-with name as parameter returns category by name
+#### GET
+returns all categories 
 #### POST 
 creates new category
 request body example
