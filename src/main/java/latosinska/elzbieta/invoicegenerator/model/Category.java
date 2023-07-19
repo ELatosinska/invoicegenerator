@@ -1,11 +1,10 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.exceptions.InvalidTaxRateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Collection;
 
 @Entity
 @Table(name="categories")
@@ -19,9 +18,16 @@ public class Category {
 
 
     public Category(String name, int taxRateInPercent) {
+        if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
         this.name = name;
         this.taxRateInPercent = taxRateInPercent;
     }
 
-    //TODO: add validation to taxRate
+    public void setTaxRateInPercent(Integer taxRateInPercent) {
+        if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
+
+        this.taxRateInPercent = taxRateInPercent;
+    }
+
+
 }
