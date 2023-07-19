@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Collection;
-
 @Entity
 @Table(name="categories")
 @Getter @Setter @NoArgsConstructor
@@ -30,4 +28,6 @@ public class Category {
 
         this.taxRateInPercent = taxRateInPercent;
     }
+
+
 }

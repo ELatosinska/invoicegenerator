@@ -1,90 +1,89 @@
 package latosinska.elzbieta.invoicegenerator.controller;
 
+import jakarta.annotation.Resource;
+import latosinska.elzbieta.invoicegenerator.dto.CategoryDTO;
+import latosinska.elzbieta.invoicegenerator.exceptions.NoSuchCategoryException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
-import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import latosinska.elzbieta.invoicegenerator.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 @CrossOrigin(origins = "localhost:8081")
 @RestController
 @RequestMapping("/api/categories")
-public class CategoryController{
-    @Autowired
-    CategoryRepository categoryRepository;
+public class CategoryController {
+    @Resource
+    private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String name) {
-        try {
-            List<Category> categories = new ArrayList<>();
-            if (name == null) {
-                categories.addAll(categoryRepository.findAll());
-            } else {
-                categories.add(categoryRepository.findByName(name));
-            }
-            if(categories.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(categories, HttpStatus.OK);
-        } catch(Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<List<CategoryDTO>> getCategories(@RequestParam(required = false) String name) {
+        List<CategoryDTO> categories = categoryService.getCategories().stream()
+                .map(categoryService::getDTOFromCategory)
+                .toList();
+        if (categories.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
-        Optional<Category> category = categoryRepository.findById(id);
 
-        if(category.isPresent()) {
-            return new ResponseEntity<>(category.get(), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<CategoryDTO> getCategoryByName(@RequestParam String name) {
+        Optional<Category> category = categoryService.getCategoryByName(name);
+        if (category.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(categoryService.getDTOFromCategory(category.get()), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("id") Long id) {
+        Optional<Category> category = categoryService.getCategoryById(id);
+        if (category.isPresent()) {
+            return new ResponseEntity<>(categoryService.getDTOFromCategory(category.get()), HttpStatus.OK); //TODO: change object in response to DTO
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        try{
-            Category createdCategory = categoryRepository.save(new Category(category.getName(), category.getTaxRateInPercent()));
-            return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
-        } catch(Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
+        return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Long id) {
-        Optional<Category> categoryToChange = categoryRepository.findById(id);
-        if(categoryToChange.isPresent()) {
-            Category changedCategory = categoryToChange.get();
-            changedCategory.setName(category.getName()==null? changedCategory.getName() : category.getName());
-            changedCategory.setTaxRateInPercent(category.getTaxRateInPercent()==null? changedCategory.getTaxRateInPercent() : category.getTaxRateInPercent());
-            return new ResponseEntity<>(categoryRepository.save(changedCategory), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable("id") Long id) {
+        try {
+            Category updatedCategory = categoryService.updateCategory(category, id);
+            return new ResponseEntity<>(categoryService.getDTOFromCategory(updatedCategory), HttpStatus.OK);
+        } catch (NoSuchCategoryException ex) {
+            Category createdCategory = categoryService.createCategory(new CategoryDTO(id, category.name(), category.taxRateInPercent()));
+            return new ResponseEntity<>(categoryService.getDTOFromCategory(createdCategory), HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") Long id) {
         try {
-            categoryRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            categoryService.deleteCategory(id);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllCategories() {
         try {
-            categoryRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            categoryService.deleteAllCategories();
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
