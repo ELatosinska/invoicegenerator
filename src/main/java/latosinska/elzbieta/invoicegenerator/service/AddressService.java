@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
+import latosinska.elzbieta.invoicegenerator.exception.NoSuchAddressException;
 import latosinska.elzbieta.invoicegenerator.model.Address;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 @Service
 public class AddressService {
     @Resource
@@ -28,7 +30,7 @@ public class AddressService {
     }
 
     public List<Address> getAddresses() {
-       return new ArrayList<>(addressRepository.findAll());
+        return new ArrayList<>(addressRepository.findAll());
     }
 
     public Optional<Address> getAddressById(Long id) {
@@ -36,27 +38,47 @@ public class AddressService {
     }
 
     public Address createAddress(AddressDTO address) {
-
         return addressRepository.save(getAddressFromDTO(address));
+    }
+
+    public Address createAddressWithGivenId(AddressDTO address, Long id) {
+        return new Address(id, address);
+    }
+
+
+    public Address updateAddress(AddressDTO newAddress, Long addressToUpdateId) throws NoSuchAddressException {
+        Optional<Address> addressToUpdate = addressRepository.findById(addressToUpdateId);
+        if (addressToUpdate.isEmpty()) throw new NoSuchAddressException();
+        return addressRepository.save(createAddressWithGivenId(newAddress, addressToUpdateId));
+    }
+
+    public void deleteAllAddresses() {
+        addressRepository.deleteAll();
+    }
+
+    public void deleteAddressById(Long id) {
+        addressRepository.deleteById(id);
     }
 
     public AddressDTO getDTOFromAddress(Address address) {
         return new AddressDTO(address.getId(),
-                              address.getStreet(),
-                              address.getBuildingNumber(),
-                              address.getApartmentNumber(),
-                              address.getCity(),
-                              address.getPostalCode(),
-                              address.getCountry());
+                address.getStreet(),
+                address.getBuildingNumber(),
+                address.getApartmentNumber(),
+                address.getCity(),
+                address.getPostalCode(),
+                address.getCountry());
     }
 
     public Address getAddressFromDTO(AddressDTO addressDTO) {
         return new Address(
-                           addressDTO.street(),
-                           addressDTO.buildingNumber(),
-                           addressDTO.apartmentNumber(),
-                           addressDTO.city(),
-                           addressDTO.postalCode(),
-                           addressDTO.country());
+                addressDTO.street(),
+                addressDTO.buildingNumber(),
+                addressDTO.apartmentNumber(),
+                addressDTO.city(),
+                addressDTO.postalCode(),
+                addressDTO.country());
     }
+
+
 }
