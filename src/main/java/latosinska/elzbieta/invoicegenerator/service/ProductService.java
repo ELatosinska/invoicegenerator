@@ -2,7 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.ProductDTO;
-import latosinska.elzbieta.invoicegenerator.exceptions.NoSuchCategoryException;
+import latosinska.elzbieta.invoicegenerator.exception.NoSuchCategoryException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.model.Product;
 import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;

@@ -2,7 +2,8 @@ package latosinska.elzbieta.invoicegenerator.model;
 
 
 import jakarta.persistence.*;
-import latosinska.elzbieta.invoicegenerator.exceptions.IllegalAddressNumberException;
+import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
+import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,17 @@ public class Address {
         this.city = city;
         this.postalCode = postalCode;
         this.country = country;
+    }
+
+    public Address(Long id, AddressDTO address) {
+        if(!AddressService.isValidNumber(address.buildingNumber()) || !AddressService.isValidNumber(address.apartmentNumber()))  throw new IllegalArgumentException();
+        this.id = id;
+        this.street = address.street();;
+        this.buildingNumber = address.buildingNumber();
+        this.apartmentNumber = address.apartmentNumber();
+        this.city = address.city();
+        this.postalCode = address.postalCode();
+        this.country = address.country();
     }
 
 

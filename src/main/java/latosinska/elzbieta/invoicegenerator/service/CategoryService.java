@@ -2,7 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.CategoryDTO;
-import latosinska.elzbieta.invoicegenerator.exceptions.NoSuchCategoryException;
+import latosinska.elzbieta.invoicegenerator.exception.NoSuchCategoryException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,6 @@ public class CategoryService {
     @Resource
     CategoryRepository categoryRepository;
 
-    public Optional<Category> getCategoryByName(String name) {
-            return  categoryRepository.findByName(name);
-    }
-
     public List<Category> getCategories() {
             return new ArrayList<>(categoryRepository.findAll());
     }
@@ -29,7 +25,7 @@ public class CategoryService {
     }
 
     public Category createCategory(CategoryDTO category) {
-            return categoryRepository.save(new Category(category.name(), category.taxRateInPercent()));
+            return categoryRepository.save(new Category(category.id(), category.name(), category.taxRateInPercent()));
     }
 
     public Category updateCategory(CategoryDTO updatedCategory, Long categoryToUpdateId) throws NoSuchCategoryException {
