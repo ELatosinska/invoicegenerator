@@ -72,14 +72,14 @@ public class ProductService {
     public ResponseEntity<Product> createProduct(ProductDTO product) {
         try {
             Product createdProduct;
-            Optional<Category> productCategory = categoryRepository.findById(product.getCategoryId());
+            Optional<Category> productCategory = categoryRepository.findById(product.categoryId());
             if (productCategory.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-            if (product.getNetPrice() == null) {
-                createdProduct = productRepository.save(new Product(product.getName(), productCategory.get()));
+            if (product.netPrice() == null) {
+                createdProduct = productRepository.save(new Product(product.name(), productCategory.get()));
             } else {
-                createdProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), productCategory.get()));
+                createdProduct = productRepository.save(new Product(product.name(), product.netPrice(), productCategory.get()));
             }
             return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
         } catch (Exception ex) {
@@ -91,18 +91,18 @@ public class ProductService {
     public ResponseEntity<Product> updateProduct(ProductDTO product, Long id) {
         try {
             Optional<Product> productToUpdate = productRepository.findById(id);Category category = Optional.of(product)
-                    .map(ProductDTO::getCategoryId)
+                    .map(ProductDTO::categoryId)
                     .map(categoryId -> categoryRepository.findById(categoryId))
                     .flatMap(foundCategory -> foundCategory)
                     .orElseThrow(NoSuchCategoryException::new);
             if (productToUpdate.isEmpty()) {
 
-                Product newProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), category));
+                Product newProduct = productRepository.save(new Product(product.name(), product.netPrice(), category));
                 return  new ResponseEntity<>(newProduct, HttpStatus.CREATED);
             }
             Product modifingProduct = productToUpdate.get();
-            modifingProduct.setName(product.getName());
-            modifingProduct.setNetPrice(product.getNetPrice());
+            modifingProduct.setName(product.name());
+            modifingProduct.setNetPrice(product.netPrice());
             modifingProduct.setCategory(category);
             return new ResponseEntity<>(productRepository.save(modifingProduct), HttpStatus.OK);
         } catch (Exception ex) {
