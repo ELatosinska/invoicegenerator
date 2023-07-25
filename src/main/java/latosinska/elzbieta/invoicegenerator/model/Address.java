@@ -4,6 +4,8 @@ package latosinska.elzbieta.invoicegenerator.model;
 import jakarta.persistence.*;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
 import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.InvalidNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +32,9 @@ public class Address {
     private String country;
 
 
-    public Address(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) {
-        if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new IllegalArgumentException();
+    public Address(String street, String buildingNumber, String apartmentNumber, String city, String postalCode, String country) throws InvalidNumberException, InvalidPostalCodeException {
+        if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new InvalidNumberException();
+        if(!AddressService.isValidPostalCode(postalCode)) throw new InvalidPostalCodeException();
         this.street = street;
         this.buildingNumber = buildingNumber;
         this.apartmentNumber = apartmentNumber;
@@ -40,8 +43,9 @@ public class Address {
         this.country = country;
     }
 
-    public Address(Long id, AddressDTO address) {
-        if(!AddressService.isValidNumber(address.buildingNumber()) || !AddressService.isValidNumber(address.apartmentNumber()))  throw new IllegalArgumentException();
+    public Address(Long id, AddressDTO address) throws InvalidNumberException, InvalidPostalCodeException {
+        if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new InvalidNumberException();
+        if(!AddressService.isValidPostalCode(postalCode)) throw new InvalidPostalCodeException();
         this.id = id;
         this.street = address.street();;
         this.buildingNumber = address.buildingNumber();
@@ -52,13 +56,13 @@ public class Address {
     }
 
 
-    public void setBuildingNumber(String buildingNumber) {
+    public void setBuildingNumber(String buildingNumber) throws IllegalAddressNumberException {
         if(!AddressService.isValidNumber(buildingNumber)) throw new IllegalAddressNumberException();
         this.buildingNumber = buildingNumber;
     }
 
 
-    public void setApartmentNumber(String apartmentNumber) {
+    public void setApartmentNumber(String apartmentNumber) throws IllegalAddressNumberException {
 
         if(!AddressService.isValidNumber(apartmentNumber)) throw new IllegalAddressNumberException();
         this.apartmentNumber = apartmentNumber;
