@@ -1,4 +1,4 @@
 package latosinska.elzbieta.invoicegenerator.exception;
 
-public class IllegalAddressNumberException extends RuntimeException {
+public class IllegalAddressNumberException extends Exception {
 }
