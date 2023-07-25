@@ -3,7 +3,7 @@ package latosinska.elzbieta.invoicegenerator.controller;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
-import latosinska.elzbieta.invoicegenerator.exception.InvalidNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchAddressException;
 import latosinska.elzbieta.invoicegenerator.model.Address;
@@ -61,7 +61,7 @@ public class AddressController {
         } catch (NoSuchAddressException ex) {
             try {
                 return new ResponseEntity<>(addressService.createAddressWithGivenId(address, id), HttpStatus.CREATED);
-            } catch (InvalidNumberException e) {
+            } catch (IllegalAddressNumberException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (InvalidPostalCodeException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
