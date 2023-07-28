@@ -25,13 +25,6 @@ public class ProductService {
         return PriceService.roundPrice(product.getNetPrice() * ((double) product.getCategory().getTaxRateInPercent() / 100 + 1));
     }
 
-    public List<Product> getAllProducts(String categoryName) throws NoSuchCategoryException {
-        List<Product> products;
-        Optional<Category> productsCategory = categoryRepository.findByName(categoryName);
-        if (productsCategory.isEmpty()) throw new NoSuchCategoryException();
-        return new ArrayList<>(productRepository.findAllByCategory(productsCategory.get()));
-    }
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }

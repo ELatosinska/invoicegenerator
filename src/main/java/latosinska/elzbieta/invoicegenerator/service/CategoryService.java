@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.CategoryDTO;
+import latosinska.elzbieta.invoicegenerator.exception.InvalidTaxRateException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchCategoryException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
@@ -24,11 +25,11 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public Category createCategory(CategoryDTO category) {
+    public Category createCategory(CategoryDTO category) throws InvalidTaxRateException {
             return categoryRepository.save(new Category(category.id(), category.name(), category.taxRateInPercent()));
     }
 
-    public Category updateCategory(CategoryDTO updatedCategory, Long categoryToUpdateId) throws NoSuchCategoryException {
+    public Category updateCategory(CategoryDTO updatedCategory, Long categoryToUpdateId) throws NoSuchCategoryException, InvalidTaxRateException {
         Optional<Category> categoryToChange = categoryRepository.findById(categoryToUpdateId);
         if (categoryToChange.isEmpty()) throw new NoSuchCategoryException();
 

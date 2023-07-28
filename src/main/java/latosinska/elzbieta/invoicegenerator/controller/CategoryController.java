@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.controller;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.CategoryDTO;
+import latosinska.elzbieta.invoicegenerator.exception.InvalidTaxRateException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchCategoryException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.service.CategoryService;
@@ -42,16 +43,25 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
-        return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
+        } catch (InvalidTaxRateException e) {
+            return new ResponseEntity<>(HttpStatus.valueOf(400));
+        }
     }
 
-    @PutMapping("/{id}") //FIXME: create category with given id
+    @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable("id") Long id) {
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);
             return new ResponseEntity<>(categoryService.getDTOFromCategory(updatedCategory), HttpStatus.OK);
         } catch (NoSuchCategoryException ex) {
-            Category createdCategory = categoryService.createCategory(new CategoryDTO(id, category.name(), category.taxRateInPercent()));
+            Category createdCategory;
+            try {
+                createdCategory = categoryService.createCategory(new CategoryDTO(id, category.name(), category.taxRateInPercent()));
+            } catch (InvalidTaxRateException e) {
+                return new ResponseEntity<>(HttpStatus.valueOf(400));
+            }
             return new ResponseEntity<>(categoryService.getDTOFromCategory(createdCategory), HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

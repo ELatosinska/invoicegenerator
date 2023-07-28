@@ -17,20 +17,20 @@ public class Category {
     private Integer taxRateInPercent;
 
 
-    public Category(String name, int taxRateInPercent) {
+    public Category(String name, int taxRateInPercent) throws InvalidTaxRateException {
         if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
         this.name = name;
         this.taxRateInPercent = taxRateInPercent;
     }
 
-    public Category(Long id, String name, int taxRateInPercent) {
+    public Category(Long id, String name, int taxRateInPercent) throws InvalidTaxRateException {
         if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
         this.id = id;
         this.name = name;
         this.taxRateInPercent = taxRateInPercent;
     }
 
-    public void setTaxRateInPercent(Integer taxRateInPercent) {
+    public void setTaxRateInPercent(Integer taxRateInPercent) throws InvalidTaxRateException {
         if(taxRateInPercent < 0 || taxRateInPercent > 100) throw new InvalidTaxRateException();
 
         this.taxRateInPercent = taxRateInPercent;
