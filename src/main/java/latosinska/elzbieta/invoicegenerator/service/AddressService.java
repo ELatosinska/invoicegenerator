@@ -2,16 +2,12 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
-import latosinska.elzbieta.invoicegenerator.exception.InvalidNumberException;
+import latosinska.elzbieta.invoicegenerator.exception.InvalidAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchAddressException;
 import latosinska.elzbieta.invoicegenerator.model.Address;
 import latosinska.elzbieta.invoicegenerator.repository.AddressRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +41,16 @@ public class AddressService {
         return addressRepository.findById(id);
     }
 
-    public Address createAddress(AddressDTO address) throws InvalidNumberException, InvalidPostalCodeException {
+    public Address createAddress(AddressDTO address) throws InvalidAddressNumberException, InvalidPostalCodeException {
         return addressRepository.save(getAddressFromDTO(address));
     }
 
-    public Address createAddressWithGivenId(AddressDTO address, Long id) throws InvalidNumberException, InvalidPostalCodeException {
+    public Address createAddressWithGivenId(AddressDTO address, Long id) throws InvalidAddressNumberException, InvalidPostalCodeException {
         return new Address(id, address);
     }
 
 
-    public Address updateAddress(AddressDTO newAddress, Long addressToUpdateId) throws NoSuchAddressException, InvalidNumberException, InvalidPostalCodeException {
+    public Address updateAddress(AddressDTO newAddress, Long addressToUpdateId) throws NoSuchAddressException, InvalidAddressNumberException, InvalidPostalCodeException {
         Optional<Address> addressToUpdate = addressRepository.findById(addressToUpdateId);
         if (addressToUpdate.isEmpty()) throw new NoSuchAddressException();
         return addressRepository.save(createAddressWithGivenId(newAddress, addressToUpdateId));
@@ -78,7 +74,7 @@ public class AddressService {
                 address.getCountry());
     }
 
-    public Address getAddressFromDTO(AddressDTO addressDTO) throws InvalidNumberException, InvalidPostalCodeException {
+    public Address getAddressFromDTO(AddressDTO addressDTO) throws InvalidAddressNumberException, InvalidPostalCodeException {
         return new Address(
                 addressDTO.street(),
                 addressDTO.buildingNumber(),
