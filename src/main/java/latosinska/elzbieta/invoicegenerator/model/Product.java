@@ -1,6 +1,7 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
+import latosinska.elzbieta.invoicegenerator.dto.ProductDTO;
 import latosinska.elzbieta.invoicegenerator.service.PriceService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,17 @@ public class Product {
         this.name = name;
         this.category = category;
     }
+    public Product(Long id, String name, Double netPrice, Category category) {
+        this.name = name;
+        this.netPrice = netPrice;
+        this.category = category;
+    }
+
+    public Product(Long id, String name, Category category) {
+        this.name = name;
+        this.category = category;
+    }
+
 
     public void setNetPrice(Double netPrice) {
         this.netPrice = PriceService.roundPrice(netPrice);

@@ -1,4 +1,4 @@
 package latosinska.elzbieta.invoicegenerator.exception;
 
-public class InvalidTaxRateException extends RuntimeException{
+public class InvalidTaxRateException extends Exception{
 }

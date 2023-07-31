@@ -3,12 +3,11 @@ package latosinska.elzbieta.invoicegenerator.service;
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.ProductDTO;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchCategoryException;
+import latosinska.elzbieta.invoicegenerator.exception.NoSuchProductException;
 import latosinska.elzbieta.invoicegenerator.model.Category;
 import latosinska.elzbieta.invoicegenerator.model.Product;
 import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
 import latosinska.elzbieta.invoicegenerator.repository.ProductRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,105 +25,59 @@ public class ProductService {
         return PriceService.roundPrice(product.getNetPrice() * ((double) product.getCategory().getTaxRateInPercent() / 100 + 1));
     }
 
-    public ResponseEntity<List<Product>> getAllProducts(String categoryName) {
-        try {
-            List<Product> products;
-            Optional<Category> productsCategory = categoryRepository.findByName(categoryName);
-            if (productsCategory.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                products = new ArrayList<>(productRepository.findAllByCategory(productsCategory.get()));
-            }
-
-            if (products.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            else
-                return new ResponseEntity<>(products, HttpStatus.OK);
-
-
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
-    public ResponseEntity<List<Product>> getAllProducts() {
-        try {
-            List<Product> products;
-            products = productRepository.findAll();
-            if (products.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            else
-                return new ResponseEntity<>(products, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
-    public ResponseEntity<Product> getProductById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isPresent()) {
-            return new ResponseEntity<>(product.get(), HttpStatus.OK);
+    public Product createProduct(ProductDTO product) throws NoSuchCategoryException {
+        return productRepository.save(getProductFromDTO(product));
+    }
+
+    public Product createProductWithGivenId(ProductDTO product, Long id) throws NoSuchCategoryException {
+        Product newProduct;
+        Optional<Category> category = categoryRepository.findById(product.categoryId());
+        if (category.isEmpty()) throw new NoSuchCategoryException();
+        if (product.netPrice() != null) {
+            newProduct = new Product(id, product.name(), product.netPrice(), category.get());
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            newProduct = new Product(id, product.name(), category.get());
         }
+        return productRepository.save(newProduct);
     }
 
-    public ResponseEntity<Product> createProduct(ProductDTO product) {
-        try {
-            Product createdProduct;
-            Optional<Category> productCategory = categoryRepository.findById(product.getCategoryId());
-            if (productCategory.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            if (product.getNetPrice() == null) {
-                createdProduct = productRepository.save(new Product(product.getName(), productCategory.get()));
-            } else {
-                createdProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), productCategory.get()));
-            }
-            return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    private Product getProductFromDTO(ProductDTO product) throws NoSuchCategoryException {
+        Optional<Category> category = categoryRepository.findById(product.categoryId());
+        if (category.isEmpty()) throw new NoSuchCategoryException();
+        if (product.netPrice() != null) {
+            return new Product(product.name(), product.netPrice(), category.get());
         }
+        return new Product(product.name(), category.get());
     }
 
-    public ResponseEntity<Product> updateProduct(ProductDTO product, Long id) {
-        try {
-            Optional<Product> productToUpdate = productRepository.findById(id);Category category = Optional.of(product)
-                    .map(ProductDTO::getCategoryId)
-                    .map(categoryId -> categoryRepository.findById(categoryId))
-                    .flatMap(foundCategory -> foundCategory)
-                    .orElseThrow(NoSuchCategoryException::new);
-            if (productToUpdate.isEmpty()) {
+    public Product updateProduct(ProductDTO product, Long id) throws NoSuchProductException, NoSuchCategoryException {
+        Optional<Product> productToUpdate = productRepository.findById(id);
+        if (productToUpdate.isEmpty()) throw new NoSuchProductException();
+        Category category = Optional.of(product)
+                .map(ProductDTO::categoryId)
+                .flatMap(categoryId -> categoryRepository.findById(categoryId))
+                .orElseThrow(NoSuchCategoryException::new);
 
-                Product newProduct = productRepository.save(new Product(product.getName(), product.getNetPrice(), category));
-                return  new ResponseEntity<>(newProduct, HttpStatus.CREATED);
-            }
-            Product modifingProduct = productToUpdate.get();
-            modifingProduct.setName(product.getName());
-            modifingProduct.setNetPrice(product.getNetPrice());
-            modifingProduct.setCategory(category);
-            return new ResponseEntity<>(productRepository.save(modifingProduct), HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Product modifingProduct = productToUpdate.get();
+        modifingProduct.setName(product.name());
+        modifingProduct.setNetPrice(product.netPrice());
+        modifingProduct.setCategory(category);
+        return productRepository.save(modifingProduct);
     }
 
-    public ResponseEntity<HttpStatus> deleteAllProducts() {
-        try {
-            productRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
     }
 
-    public ResponseEntity<HttpStatus> deleteProduct(Long id) {
-        try {
-            productRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 }
