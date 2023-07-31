@@ -10,7 +10,6 @@ import latosinska.elzbieta.invoicegenerator.repository.CategoryRepository;
 import latosinska.elzbieta.invoicegenerator.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

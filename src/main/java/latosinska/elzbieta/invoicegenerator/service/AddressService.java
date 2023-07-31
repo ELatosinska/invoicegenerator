@@ -78,7 +78,7 @@ public class AddressService {
                 address.getCity(),
                 address.getPostalCode(),
                 address.getCountry());
-
+    }
     public Address getAddressFromDTO(AddressDTO addressDTO) throws InvalidAddressNumberException, InvalidPostalCodeException {
 
         return new Address(

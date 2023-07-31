@@ -10,7 +10,6 @@ import latosinska.elzbieta.invoicegenerator.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

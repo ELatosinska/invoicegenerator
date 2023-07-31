@@ -25,7 +25,7 @@ public class InvoiceService {
     }
 
     public void addItem(InvoiceItem invoiceItem) {
-        if(productsExistsOnTheInvoice(invoiceItem)) {
+        if(isProductOnTheInvoice(invoiceItem)) {
             addQuantityOfExistingProduct(invoiceItem);
         } else {
             invoice.getItems().add(invoiceItem);
@@ -38,7 +38,7 @@ public class InvoiceService {
                 .forEach(item -> item.setQuantity(item.getQuantity()+ invoiceItem.getQuantity()));
     }
 
-    private boolean productsExistsOnTheInvoice(InvoiceItem invoiceItem) {
+    private boolean isProductOnTheInvoice(InvoiceItem invoiceItem) {
         return invoice.getItems().stream().map(InvoiceItem::getProduct).anyMatch(product -> product.equals(invoiceItem.getProduct()));
     }
 
