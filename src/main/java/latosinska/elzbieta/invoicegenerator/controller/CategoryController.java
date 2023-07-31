@@ -46,7 +46,7 @@ public class CategoryController {
         try {
             return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
         } catch (InvalidTaxRateException e) {
-            return new ResponseEntity<>(HttpStatus.valueOf(400));
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -60,7 +60,7 @@ public class CategoryController {
             try {
                 createdCategory = categoryService.createCategory(new CategoryDTO(id, category.name(), category.taxRateInPercent()));
             } catch (InvalidTaxRateException e) {
-                return new ResponseEntity<>(HttpStatus.valueOf(400));
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             return new ResponseEntity<>(categoryService.getDTOFromCategory(createdCategory), HttpStatus.CREATED);
         } catch (Exception ex) {

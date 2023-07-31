@@ -38,7 +38,7 @@ public class ProductController {
             Product newProduct = productService.createProduct(product);
             return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
         } catch (NoSuchCategoryException exception) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception exception) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -55,7 +55,7 @@ public class ProductController {
                 return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
 
             } catch (NoSuchCategoryException e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (NoSuchCategoryException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
