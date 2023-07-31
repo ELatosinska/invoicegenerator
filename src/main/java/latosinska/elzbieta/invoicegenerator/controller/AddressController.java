@@ -3,7 +3,8 @@ package latosinska.elzbieta.invoicegenerator.controller;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
-import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
+
+import latosinska.elzbieta.invoicegenerator.exception.InvalidAddressNumberException;
 import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchAddressException;
 import latosinska.elzbieta.invoicegenerator.model.Address;
@@ -45,23 +46,26 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> createAddress(@RequestBody AddressDTO address) {
+    public ResponseEntity<AddressDTO> createAddress(@RequestBody AddressDTO address) {
         try {
-            return new ResponseEntity<>(addressService.createAddress(address), HttpStatus.CREATED);
+            Address newAddress = addressService.createAddress(address);
+            return new ResponseEntity<>(addressService.getDTOFromAddress(newAddress), HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Address> updateAddress(@RequestBody AddressDTO address, @PathVariable("id") Long id) {
+    public ResponseEntity<AddressDTO> updateAddress(@RequestBody AddressDTO address, @PathVariable("id") Long id) {
         try {
             Address updatedAddress = addressService.updateAddress(address, id);
-            return new ResponseEntity<>(updatedAddress, HttpStatus.OK);
+            return new ResponseEntity<>(addressService.getDTOFromAddress(updatedAddress), HttpStatus.OK);
         } catch (NoSuchAddressException ex) {
             try {
-                return new ResponseEntity<>(addressService.createAddressWithGivenId(address, id), HttpStatus.CREATED);
-            } catch (IllegalAddressNumberException e) {
+                Address newAddress = addressService.createAddressWithGivenId(address, id);
+                return new ResponseEntity<>(addressService.getDTOFromAddress(newAddress), HttpStatus.CREATED);
+            } catch (InvalidAddressNumberException e) {
+
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (InvalidPostalCodeException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,3 +91,4 @@ public class AddressController {
         }
     }
 }
+

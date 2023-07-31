@@ -2,7 +2,9 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.AddressDTO;
-import latosinska.elzbieta.invoicegenerator.exception.IllegalAddressNumberException;
+
+import latosinska.elzbieta.invoicegenerator.exception.InvalidAddressNumberException;
+
 import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchAddressException;
 import latosinska.elzbieta.invoicegenerator.model.Address;
@@ -41,16 +43,20 @@ public class AddressService {
         return addressRepository.findById(id);
     }
 
-    public Address createAddress(AddressDTO address) throws IllegalAddressNumberException, InvalidPostalCodeException {
+
+    public Address createAddress(AddressDTO address) throws InvalidAddressNumberException, InvalidPostalCodeException {
         return addressRepository.save(getAddressFromDTO(address));
     }
 
-    public Address createAddressWithGivenId(AddressDTO address, Long id) throws IllegalAddressNumberException, InvalidPostalCodeException {
+    public Address createAddressWithGivenId(AddressDTO address, Long id) throws InvalidAddressNumberException, InvalidPostalCodeException {
+
         return new Address(id, address);
     }
 
 
-    public Address updateAddress(AddressDTO newAddress, Long addressToUpdateId) throws NoSuchAddressException, IllegalAddressNumberException, InvalidPostalCodeException {
+
+    public Address updateAddress(AddressDTO newAddress, Long addressToUpdateId) throws NoSuchAddressException, InvalidAddressNumberException, InvalidPostalCodeException {
+
         Optional<Address> addressToUpdate = addressRepository.findById(addressToUpdateId);
         if (addressToUpdate.isEmpty()) throw new NoSuchAddressException();
         return addressRepository.save(createAddressWithGivenId(newAddress, addressToUpdateId));
@@ -72,9 +78,9 @@ public class AddressService {
                 address.getCity(),
                 address.getPostalCode(),
                 address.getCountry());
-    }
 
-    public Address getAddressFromDTO(AddressDTO addressDTO) throws IllegalAddressNumberException, InvalidPostalCodeException {
+    public Address getAddressFromDTO(AddressDTO addressDTO) throws InvalidAddressNumberException, InvalidPostalCodeException {
+
         return new Address(
                 addressDTO.street(),
                 addressDTO.buildingNumber(),
