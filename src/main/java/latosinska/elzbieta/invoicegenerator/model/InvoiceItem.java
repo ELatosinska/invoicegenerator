@@ -13,12 +13,13 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class InvoiceItem {
+    @Id @GeneratedValue Long id;
     @ManyToOne
-    private @Id Product product;
+    private Product product;
     private Integer quantity;
     @ManyToOne()
     @JoinColumn(name="invoice_id", referencedColumnName = "id")
-    private @Id Invoice invoice;
+    private Invoice invoice;
 
     public InvoiceItem(Product product, Integer quantity, Invoice invoice) {
         if(quantity<1) throw new IllegalArgumentException("Quantity cannot be less than 1");
@@ -50,7 +51,6 @@ public class InvoiceItem {
         return "InvoiceItem{" +
                 "product=" + product +
                 ", quantity=" + quantity +
-                ", invoice=" + invoice +
                 '}';
     }
 }

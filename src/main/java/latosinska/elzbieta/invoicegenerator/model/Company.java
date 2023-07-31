@@ -16,7 +16,7 @@ public class Company {
     private @Id @GeneratedValue Long id;
     @Column(nullable = false)
     private String name;
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "address", referencedColumnName = "id")
     @OneToOne
     private Address address;
 

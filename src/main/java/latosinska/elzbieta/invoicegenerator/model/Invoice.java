@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 
@@ -22,15 +21,13 @@ public class Invoice {
     private Date createdDate;
     @Column(name = "due_date")
     private Date dueDate;
-    private @Id @GeneratedValue Long id;
+    @Id @GeneratedValue private Long id;
     @ManyToOne
     @JoinColumn(name="vendor_id", referencedColumnName = "id")
     private Company vendor;
     @ManyToOne
     @JoinColumn(name="vendee_id", referencedColumnName = "id")
     private Company vendee;
-    @OneToMany(mappedBy = "invoice")
-    private Collection<InvoiceItem> items;
 
     {
         createdDate = new Date(System.currentTimeMillis());
@@ -57,7 +54,6 @@ public class Invoice {
                 ", id=" + id +
                 ", vendor=" + vendor +
                 ", vendee=" + vendee +
-                ", items=" + items +
                 '}';
     }
 
@@ -66,12 +62,12 @@ public class Invoice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Invoice invoice = (Invoice) o;
-        return Objects.equals(createdDate, invoice.createdDate) && Objects.equals(dueDate, invoice.dueDate) && Objects.equals(id, invoice.id) && Objects.equals(vendor, invoice.vendor) && Objects.equals(vendee, invoice.vendee) && Objects.equals(items, invoice.items);
+        return Objects.equals(createdDate, invoice.createdDate) && Objects.equals(dueDate, invoice.dueDate) && Objects.equals(id, invoice.id) && Objects.equals(vendor, invoice.vendor) && Objects.equals(vendee, invoice.vendee);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate, dueDate, id, vendor, vendee, items);
+        return Objects.hash(createdDate, dueDate, id, vendor, vendee);
     }
 
     private Date calculateDueDate(Date createdDate) {
@@ -80,4 +76,6 @@ public class Invoice {
         calendar.add(Calendar.DATE, timeToPayForInvoiceInDays);
         return calendar.getTime();
     }
+
+
 }
