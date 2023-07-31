@@ -56,14 +56,7 @@ public class ProductService {
         return productRepository.save(newProduct);
     }
 
-    private Product getProductFromDTO(ProductDTO product) throws NoSuchCategoryException {
-        Optional<Category> category = categoryRepository.findById(product.categoryId());
-        if (category.isEmpty()) throw new NoSuchCategoryException();
-        if (product.netPrice() != null) {
-            return new Product(product.name(), product.netPrice(), category.get());
-        }
-        return new Product(product.name(), category.get());
-    }
+
 
     public Product updateProduct(ProductDTO product, Long id) throws NoSuchProductException, NoSuchCategoryException {
         Optional<Product> productToUpdate = productRepository.findById(id);
@@ -86,5 +79,18 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    private Product getProductFromDTO(ProductDTO product) throws NoSuchCategoryException {
+        Optional<Category> category = categoryRepository.findById(product.categoryId());
+        if (category.isEmpty()) throw new NoSuchCategoryException();
+        if (product.netPrice() != null) {
+            return new Product(product.name(), product.netPrice(), category.get());
+        }
+        return new Product(product.name(), category.get());
+    }
+
+    public ProductDTO getDtoFromProduct(Product product) {
+        return new ProductDTO(product.getId(), product.getName(), product.getCategory().getId(), product.getNetPrice());
     }
 }
