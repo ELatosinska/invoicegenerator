@@ -38,7 +38,7 @@ public class CompanyService {
     }
 
     public Company updateCompany(CompanyDTO companyDTO, Long id) throws NoSuchCompanyException, NoSuchAddressException {
-        Company comapnyToUpdate = companyRepository.findById(id).orElseThrow(NoSuchCompanyException::new);
+        if(!companyRepository.existsById(id)) throw new NoSuchCompanyException();
         Address newAddress = addressService.getAddressById(companyDTO.addressId()).orElseThrow(NoSuchAddressException::new);
         return companyRepository.save(new Company(id, companyDTO.name(), newAddress));
     }
@@ -55,5 +55,9 @@ public class CompanyService {
         Optional<Address> address = addressService.getAddressById(company.addressId());
         if (address.isEmpty()) throw new NoSuchAddressException();
         return new Company(company.name(), address.get());
+    }
+
+    public CompanyDTO getDtoFromCompany(Company company) {
+        return new CompanyDTO(company.getId(), company.getName(), company.getAddress().getId());
     }
 }

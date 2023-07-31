@@ -21,8 +21,8 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping
-    public ResponseEntity<List<Company>> getAllCompanies() {
-        List<Company> companies = companyService.getAllCompanies();
+    public ResponseEntity<List<CompanyDTO>> getAllCompanies() {
+        List<CompanyDTO> companies = companyService.getAllCompanies().stream().map(companyService::getDtoFromCompany).toList();
         if (companies.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -30,16 +30,17 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable("id") Long id) {
+    public ResponseEntity<CompanyDTO> getCompanyById(@PathVariable("id") Long id) {
         Optional<Company> company = companyService.getCompanyById(id);
         if (company.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(company.get(), HttpStatus.OK);
+        return new ResponseEntity<>(companyService.getDtoFromCompany(company.get()), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Company> createCompany(@RequestBody CompanyDTO newCompany) {
+    public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyDTO newCompany) {
         try {
-            return new ResponseEntity<>(companyService.createCompany(newCompany), HttpStatus.CREATED);
+            Company createdCompany = companyService.createCompany(newCompany);
+            return new ResponseEntity<>(companyService.getDtoFromCompany(createdCompany), HttpStatus.CREATED);
         } catch (NoSuchAddressException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
@@ -48,16 +49,16 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Company> updateCompany(@RequestBody CompanyDTO company, @PathVariable("id") Long id) {
+    public ResponseEntity<CompanyDTO> updateCompany(@RequestBody CompanyDTO company, @PathVariable("id") Long id) {
         try {
             Company updatedCompany = companyService.updateCompany(company, id);
-        return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
+        return new ResponseEntity<>(companyService.getDtoFromCompany(updatedCompany), HttpStatus.OK);
         } catch (NoSuchAddressException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchCompanyException ex) {
             try {
                 Company createdCompany = companyService.createCompanyWithGivenId(company, id);
-                return new ResponseEntity<>(createdCompany, HttpStatus.CREATED);
+                return new ResponseEntity<>(companyService.getDtoFromCompany(createdCompany), HttpStatus.CREATED);
             } catch (NoSuchAddressException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
