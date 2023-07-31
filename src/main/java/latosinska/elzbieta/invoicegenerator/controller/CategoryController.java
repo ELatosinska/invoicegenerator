@@ -45,7 +45,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.getDTOFromCategory(categoryService.createCategory(category)), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}") //FIXME: create category with given id
+    @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable("id") Long id) {
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);
