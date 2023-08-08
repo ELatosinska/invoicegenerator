@@ -4,10 +4,12 @@ import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.InvoiceDTO;
 import latosinska.elzbieta.invoicegenerator.dto.InvoiceItemDTO;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchInvoiceException;
+import latosinska.elzbieta.invoicegenerator.exception.NoSuchProductException;
 import latosinska.elzbieta.invoicegenerator.model.Invoice;
 import latosinska.elzbieta.invoicegenerator.service.CompanyService;
 import latosinska.elzbieta.invoicegenerator.service.InvoiceItemService;
 import latosinska.elzbieta.invoicegenerator.service.InvoiceService;
+import latosinska.elzbieta.invoicegenerator.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ public class InvoiceController {
     @Resource
     private InvoiceService invoiceService;
     @Resource
+    private ProductService productService;
+    @Resource
     private CompanyService companyService;
     @Resource
     private InvoiceItemService invoiceItemService;
@@ -32,8 +36,8 @@ public class InvoiceController {
     }
 
     @PatchMapping("/{id}")
-    public Invoice addItemToInvoice(@PathVariable("id") Long id, @RequestBody InvoiceItemDTO invoiceItemDTO) throws NoSuchInvoiceException {
-        return invoiceService.addItemToInvoice(id, invoiceItemDTO.product(), invoiceItemDTO.quantity());
+    public Invoice addItemToInvoice(@PathVariable("id") Long id, @RequestBody InvoiceItemDTO invoiceItemDTO) throws NoSuchInvoiceException, NoSuchProductException {
+        return invoiceService.addItemToInvoice(id, productService.getProductById(invoiceItemDTO.productId()).orElseThrow(NoSuchProductException::new), invoiceItemDTO.quantity());
     }
 
     @PostMapping

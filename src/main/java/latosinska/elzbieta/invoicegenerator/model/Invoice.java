@@ -1,9 +1,11 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import latosinska.elzbieta.invoicegenerator.service.PriceService;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -25,18 +27,19 @@ public class Invoice {
     @Id
     @GeneratedValue
     private Long id;
-    @ManyToOne
+    @ManyToOne @JsonBackReference
     @JoinColumn(name = "vendor_id", referencedColumnName = "id")
     private Company vendor;
-    @ManyToOne
+    @ManyToOne @JsonBackReference
     @JoinColumn(name = "vendee_id", referencedColumnName = "id")
     private Company vendee;
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private Collection<InvoiceItem> items;
 
     {
         createdDate = new Date(System.currentTimeMillis());
         dueDate = calculateDueDate(createdDate);
+        items = new ArrayList<>();
     }
 
 
@@ -59,13 +62,7 @@ public class Invoice {
         return calendar.getTime();
     }
 
-    public void addItemToInvoice(Product product, int quantity) {
-        if (isProductOnTheInvoice(product)) {
-            addQuantityOfExistingProduct(product, quantity);
-        } else {
-            items.add(new InvoiceItem(product, quantity, this));
-        }
-    }
+
 
     public Double calculateTotalNetPrice(Invoice invoice) {
         return PriceService.roundPrice(items.stream()
@@ -80,15 +77,4 @@ public class Invoice {
     public Double calculateTotalGrossPrice(Invoice invoice) {
         return PriceService.roundPrice(calculateTotalNetPrice(invoice)+calculateTotalTaxPrice(invoice));
     }
-
-    private void addQuantityOfExistingProduct(Product product, int quantity) {
-        items.stream()
-                .filter(item -> item.getProduct().equals(product))
-                .forEach(item -> item.setQuantity(item.getQuantity() + quantity));
-    }
-
-    private boolean isProductOnTheInvoice(Product product) {
-        return items.stream().map(InvoiceItem::getProduct).anyMatch(invoiceProduct -> invoiceProduct.equals(product));
-    }
-
 }

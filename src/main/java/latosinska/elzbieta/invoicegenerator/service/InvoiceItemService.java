@@ -20,10 +20,16 @@ public class InvoiceItemService {
     }
 
     public InvoiceItem createInvoiceItem(Product product, int quantity, Invoice invoice) {
-        return invoiceItemRepository.save(new InvoiceItem(product, quantity, invoice));
+        InvoiceItem newItem = new InvoiceItem(product, quantity, invoice);
+        return invoiceItemRepository.save(newItem);
+    }
+
+    public void addQuantity(InvoiceItem invoiceItem, int quantity) {
+        invoiceItem.setQuantity(invoiceItem.getQuantity()+quantity);
+        invoiceItemRepository.save(invoiceItem);
     }
 
     public InvoiceItemDTO getDTOFromItem(InvoiceItem invoiceItem) {
-        return new InvoiceItemDTO(invoiceItem.getProduct(), invoiceItem.getQuantity());
+        return new InvoiceItemDTO(invoiceItem.getProduct().getId(), invoiceItem.getQuantity());
     }
 }
