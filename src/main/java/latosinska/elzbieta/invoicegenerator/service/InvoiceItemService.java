@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.InvoiceItemDTO;
+import latosinska.elzbieta.invoicegenerator.exception.LessThanOneQuantityException;
 import latosinska.elzbieta.invoicegenerator.model.Invoice;
 import latosinska.elzbieta.invoicegenerator.model.InvoiceItem;
 import latosinska.elzbieta.invoicegenerator.model.Product;
@@ -19,12 +20,12 @@ public class InvoiceItemService {
         return invoiceItemRepository.findByInvoice(invoice);
     }
 
-    public InvoiceItem createInvoiceItem(Product product, int quantity, Invoice invoice) {
+    public InvoiceItem createInvoiceItem(Product product, int quantity, Invoice invoice) throws LessThanOneQuantityException {
         InvoiceItem newItem = new InvoiceItem(product, quantity, invoice);
         return invoiceItemRepository.save(newItem);
     }
 
-    public void addQuantity(InvoiceItem invoiceItem, int quantity) {
+    public void addQuantity(InvoiceItem invoiceItem, int quantity) throws LessThanOneQuantityException {
         invoiceItem.setQuantity(invoiceItem.getQuantity()+quantity);
         invoiceItemRepository.save(invoiceItem);
     }

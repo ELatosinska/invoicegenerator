@@ -2,6 +2,7 @@ package latosinska.elzbieta.invoicegenerator.service;
 
 import jakarta.annotation.Resource;
 import latosinska.elzbieta.invoicegenerator.dto.InvoiceItemDTO;
+import latosinska.elzbieta.invoicegenerator.exception.LessThanOneQuantityException;
 import latosinska.elzbieta.invoicegenerator.exception.NoSuchInvoiceException;
 import latosinska.elzbieta.invoicegenerator.model.Company;
 import latosinska.elzbieta.invoicegenerator.model.Invoice;
@@ -35,7 +36,7 @@ public class InvoiceService {
         return invoiceRepository.save(new Invoice(vendor, vendee));
     }
 
-    public Invoice addItemToInvoice( Long id, Product product, int quantity) throws NoSuchInvoiceException {
+    public Invoice addItemToInvoice( Long id, Product product, int quantity) throws NoSuchInvoiceException, LessThanOneQuantityException {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(NoSuchInvoiceException::new);
         if (isProductOnTheInvoice(product, invoice)) {
             addQuantityOfExistingProduct(product, quantity, invoice);
@@ -53,7 +54,7 @@ public class InvoiceService {
         invoiceRepository.deleteById(id);
     }
 
-    private void addQuantityOfExistingProduct(Product product, int quantity, Invoice invoice) {
+    private void addQuantityOfExistingProduct(Product product, int quantity, Invoice invoice) throws LessThanOneQuantityException {
         InvoiceItem invoiceItem = invoice.getItems().stream()
                 .filter(item -> item.getProduct().equals(product)).findFirst().get();
         invoiceItemService.addQuantity(invoiceItem, quantity);
