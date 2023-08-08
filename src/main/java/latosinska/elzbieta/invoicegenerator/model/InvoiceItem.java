@@ -1,17 +1,15 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Objects;
 
 @Entity
 @Table(name = "invoice_items")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor @EqualsAndHashCode
+@ToString
 public class InvoiceItem {
     @Id @GeneratedValue Long id;
     @ManyToOne
@@ -33,25 +31,5 @@ public class InvoiceItem {
         this.quantity = quantity;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InvoiceItem that = (InvoiceItem) o;
-        return Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity) && Objects.equals(invoice, that.invoice);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(product, quantity, invoice);
-    }
-
-    @Override
-    public String toString() {
-        return "InvoiceItem{" +
-                "product=" + product +
-                ", quantity=" + quantity +
-                '}';
-    }
 }
 

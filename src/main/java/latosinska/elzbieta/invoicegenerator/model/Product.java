@@ -1,19 +1,16 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
-import latosinska.elzbieta.invoicegenerator.dto.ProductDTO;
 import latosinska.elzbieta.invoicegenerator.service.PriceService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Objects;
 
 @Entity
 @Table(name = "products")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor @EqualsAndHashCode
+@ToString
 public class Product {
     private @Id
     @GeneratedValue Long id;
@@ -52,28 +49,7 @@ public class Product {
         this.netPrice = PriceService.roundPrice(netPrice);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(netPrice, product.netPrice) && Objects.equals(category, product.category);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, netPrice, category);
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", netPrice=" + netPrice +
-                ", category=" + category +
-                '}';
-    }
 }
 
 

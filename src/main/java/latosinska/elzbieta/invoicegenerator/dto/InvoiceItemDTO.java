@@ -1,3 +1,5 @@
 package latosinska.elzbieta.invoicegenerator.dto;
 
-public record InvoiceItemDTO(Long productId, int quantity) {}
+import latosinska.elzbieta.invoicegenerator.model.Product;
+
+public record InvoiceItemDTO(Product product, int quantity) {}

@@ -1,19 +1,20 @@
 package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import latosinska.elzbieta.invoicegenerator.service.PriceService;
+import lombok.*;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "invoices")
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Invoice {
 
     private static int timeToPayForInvoiceInDays = 14;
@@ -21,13 +22,17 @@ public class Invoice {
     private Date createdDate;
     @Column(name = "due_date")
     private Date dueDate;
-    @Id @GeneratedValue private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
     @ManyToOne
-    @JoinColumn(name="vendor_id", referencedColumnName = "id")
+    @JoinColumn(name = "vendor_id", referencedColumnName = "id")
     private Company vendor;
     @ManyToOne
-    @JoinColumn(name="vendee_id", referencedColumnName = "id")
+    @JoinColumn(name = "vendee_id", referencedColumnName = "id")
     private Company vendee;
+    @OneToMany(mappedBy = "invoice")
+    private Collection<InvoiceItem> items;
 
     {
         createdDate = new Date(System.currentTimeMillis());
@@ -41,34 +46,11 @@ public class Invoice {
     }
 
     public void setTimeToPayForInvoiceInDays(int daysToPayInvoice) {
-        if(daysToPayInvoice < 0)
+        if (daysToPayInvoice < 0)
             throw new IllegalArgumentException("You cannot set time to pay less tan 0 days");
         timeToPayForInvoiceInDays = daysToPayInvoice;
     }
 
-    @Override
-    public String toString() {
-        return "Invoice{" +
-                "createdDate=" + createdDate +
-                ", dueDate=" + dueDate +
-                ", id=" + id +
-                ", vendor=" + vendor +
-                ", vendee=" + vendee +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Invoice invoice = (Invoice) o;
-        return Objects.equals(createdDate, invoice.createdDate) && Objects.equals(dueDate, invoice.dueDate) && Objects.equals(id, invoice.id) && Objects.equals(vendor, invoice.vendor) && Objects.equals(vendee, invoice.vendee);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(createdDate, dueDate, id, vendor, vendee);
-    }
 
     private Date calculateDueDate(Date createdDate) {
         Calendar calendar = Calendar.getInstance();
@@ -77,5 +59,36 @@ public class Invoice {
         return calendar.getTime();
     }
 
+    public void addItemToInvoice(Product product, int quantity) {
+        if (isProductOnTheInvoice(product)) {
+            addQuantityOfExistingProduct(product, quantity);
+        } else {
+            items.add(new InvoiceItem(product, quantity, this));
+        }
+    }
+
+    public Double calculateTotalNetPrice(Invoice invoice) {
+        return PriceService.roundPrice(items.stream()
+                .mapToDouble(item -> item.getProduct().getNetPrice()*item.getQuantity())
+                .sum());
+    }
+    public Double calculateTotalTaxPrice(Invoice invoice) {
+        return PriceService.roundPrice(items.stream()
+                .mapToDouble(item -> item.getProduct().getNetPrice()*((double) item.getProduct().getCategory().getTaxRateInPercent() /100)*item.getQuantity())
+                .sum());
+    }
+    public Double calculateTotalGrossPrice(Invoice invoice) {
+        return PriceService.roundPrice(calculateTotalNetPrice(invoice)+calculateTotalTaxPrice(invoice));
+    }
+
+    private void addQuantityOfExistingProduct(Product product, int quantity) {
+        items.stream()
+                .filter(item -> item.getProduct().equals(product))
+                .forEach(item -> item.setQuantity(item.getQuantity() + quantity));
+    }
+
+    private boolean isProductOnTheInvoice(Product product) {
+        return items.stream().map(InvoiceItem::getProduct).anyMatch(invoiceProduct -> invoiceProduct.equals(product));
+    }
 
 }

@@ -2,13 +2,11 @@ package latosinska.elzbieta.invoicegenerator.model;
 
 import jakarta.persistence.*;
 import latosinska.elzbieta.invoicegenerator.exception.InvalidTaxRateException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name="categories")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @EqualsAndHashCode @ToString
 public class Category {
     private @Id long id;
     @Column(unique = true)

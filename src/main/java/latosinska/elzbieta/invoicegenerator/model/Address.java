@@ -8,15 +8,12 @@ import latosinska.elzbieta.invoicegenerator.exception.InvalidAddressNumberExcept
 
 import latosinska.elzbieta.invoicegenerator.exception.InvalidPostalCodeException;
 import latosinska.elzbieta.invoicegenerator.service.AddressService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Objects;
 
 @Entity
 @Table(name = "Addresses")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @EqualsAndHashCode @ToString
 public class Address {
     private @Id @GeneratedValue Long id;
     @Column
@@ -31,6 +28,8 @@ public class Address {
     private String postalCode;
     @Column
     private String country;
+    @OneToOne(mappedBy = "address")
+    private Company company;
 
 
 
@@ -49,7 +48,6 @@ public class Address {
 
     public Address(Long id, AddressDTO address) throws InvalidAddressNumberException, InvalidPostalCodeException {
         if(!AddressService.isValidNumber(buildingNumber) || !AddressService.isValidNumber(apartmentNumber))  throw new InvalidAddressNumberException();
-
         if(!AddressService.isValidPostalCode(postalCode)) throw new InvalidPostalCodeException();
         this.id = id;
         this.street = address.street();;
@@ -68,35 +66,8 @@ public class Address {
 
 
     public void setApartmentNumber(String apartmentNumber) throws InvalidAddressNumberException {
-
         if(!AddressService.isValidNumber(apartmentNumber)) throw new InvalidAddressNumberException();
         this.apartmentNumber = apartmentNumber;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Address address = (Address) o;
-        return Objects.equals(id, address.id) && Objects.equals(street, address.street) && Objects.equals(buildingNumber, address.buildingNumber) && Objects.equals(apartmentNumber, address.apartmentNumber) && Objects.equals(city, address.city) && Objects.equals(postalCode, address.postalCode) && Objects.equals(country, address.country);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, street, buildingNumber, apartmentNumber, city, postalCode, country);
-    }
-
-    @Override
-    public String toString() {
-        return "Address{" +
-                "id=" + id +
-                ", street='" + street + '\'' +
-                ", buildingNumber=" + buildingNumber +
-                ", apartmentNumber=" + apartmentNumber +
-                ", city='" + city + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", country='" + country + '\'' +
-                '}';
     }
 
 }
